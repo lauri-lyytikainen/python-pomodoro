@@ -8,6 +8,7 @@ class Pomodoro(ttk.Frame):
     onTop = False
     timerSeconds = 0        
     timeTitleText = ""
+    timerStarted = False
     timerRunning = False
     timerTask = None
     notifyOnComplete = False
@@ -63,7 +64,9 @@ class Pomodoro(ttk.Frame):
         if self.timerRunning:
             return
         self.timeTitleText = "Productivity Phase"
+        self.pauseButton.config(text="Pause")
         self.timerRunning = True
+        self.timerStarted = True
         minutes = 0
         try:
             minutes = int(self.productivityTime.get())
@@ -71,8 +74,23 @@ class Pomodoro(ttk.Frame):
             minutes = 25
         self.startTimer(minutes)
 
+    def togglePause(self):
+        if self.timerRunning:
+            self.timerRunning = False
+            self.parent.after_cancel(self.timerTask)
+            self.timeTitle.config(text="Paused")
+            self.pauseButton.config(text="Resume")
+        elif self.timerStarted:
+            self.timeTitle.config(text=self.timeTitleText)
+            self.pauseButton.config(text="Pause")
+            self.timerRunning = True
+            self.updateTimer()
+
+
     def stop(self):
         self.timerRunning = False
+        self.timerStarted = False
+        self.pauseButton.config(text="Pause")
         self.timeTitle.config(text="Productivity Phase")
         self.timeDisplay.config(text="00:00")
     
@@ -139,10 +157,10 @@ class Pomodoro(ttk.Frame):
         self.timeDisplay.pack()
 
         self.checkBoxFrame = ttk.Frame(self.mainFrame)
-        self.alwaysOnTopCheckbox = ttk.Checkbutton(self.checkBoxFrame, text="Always on top", command=self.toggleAlwaysOnTop)
+        self.alwaysOnTopCheckbox = ttk.Checkbutton(self.checkBoxFrame, text="Always on Top", command=self.toggleAlwaysOnTop)
         self.alwaysOnTopCheckbox.state(['!alternate'])
         self.alwaysOnTopCheckbox.pack(side="left")
-        self.notifyOnCompleteCheckbox = ttk.Checkbutton(self.checkBoxFrame, text="Notify on complete", command=self.toggleNotifyOnComplete)
+        self.notifyOnCompleteCheckbox = ttk.Checkbutton(self.checkBoxFrame, text="Notify on Complete", command=self.toggleNotifyOnComplete)
         self.notifyOnCompleteCheckbox.state(['!alternate'])
         self.notifyOnCompleteCheckbox.pack(side="left")
 
@@ -155,6 +173,9 @@ class Pomodoro(ttk.Frame):
         self.buttonFrame = ttk.Frame(self.mainFrame)
         self.startButton = ttk.Button(self.buttonFrame, text="Start", command=self.start)
         self.startButton.pack(side="left")
+        self.pauseButton = ttk.Button(self.buttonFrame, text="Pause", command=self.togglePause)
+        self.pauseButton.pack(side="left")
+
         self.stopButton = ttk.Button(self.buttonFrame, text="Stop", command=self.stop)
         self.stopButton.pack(side="left")
 
