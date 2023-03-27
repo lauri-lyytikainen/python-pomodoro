@@ -2,6 +2,10 @@
 
 A simple pomodoro timer with adjustable time made in Python.
 
+## Screenshots
+
+![Screenshot 1](https://i.imgur.com/pGWwhgj.png)
+
 ## Notes
 
 The time periods go up to 60 minutes. The timer will not go past 60 minutes.
