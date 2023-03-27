@@ -2,6 +2,8 @@ import tkinter.ttk as ttk
 import tkinter as tk
 import ttkthemes as ThemedStyles
 import time
+import sys
+import os
 
 class Pomodoro(ttk.Frame):
 
@@ -15,6 +17,16 @@ class Pomodoro(ttk.Frame):
     style = None
 
     darkMode = False
+
+    def resource_path(relative_path):
+        """ Get absolute path to resource, works for dev and for PyInstaller """
+        try:
+            # PyInstaller creates a temp folder and stores path in _MEIPASS
+            base_path = sys._MEIPASS
+        except Exception:
+            base_path = os.path.abspath(".")
+
+        return os.path.join(base_path, relative_path)
 
     def startTimer(self, minutes):
         self.timerSeconds = int(minutes) * 60
@@ -114,6 +126,7 @@ class Pomodoro(ttk.Frame):
         
         self.parent.title("Pomodoro Timer")
         self.parent.geometry("350x250")
+        self.parent.wm_iconbitmap(default=Pomodoro.resource_path("resources/icon.ico"))
         self.parent.resizable(0,0)
 
         self.style = ThemedStyles.ThemedStyle(self.parent)
